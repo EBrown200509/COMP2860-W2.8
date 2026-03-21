@@ -171,10 +171,6 @@ int main( int argc, char **argv )
     double seconds = (double)( endTime.tv_sec + 1e-9*endTime.tv_nsec - startTime.tv_sec - 1e-9*startTime.tv_nsec );
     printf( "Time for parallel calculations: %g secs.\n", seconds );
 
-    // Start the timing now.
-    struct timespec startTime2, endTime2;
-    clock_gettime( CLOCK_REALTIME, &startTime2 );
-
     // Step 1. Matrix-vector multiplication Mu = v.
     for( int row=0; row<N; row++ )
     {
@@ -190,11 +186,6 @@ int main( int argc, char **argv )
 
     // DO NOT REMOVE OR MODIFY THIS PRINT STATEMENT AS IT IS REQUIRED BY THE ASSESSMENT.
     printf( "Result of the serial calculation: %f\n", dotProduct_serial );
-
-    // Output final time taken.
-    clock_gettime( CLOCK_REALTIME, &endTime2 );
-    double seconds2 = (double)( endTime2.tv_sec + 1e-9*endTime2.tv_nsec - startTime2.tv_sec - 1e-9*startTime2.tv_nsec );
-    printf( "Time for serial calculations: %g secs.\n", seconds2 );
 
     //
     // Clear up and quit.

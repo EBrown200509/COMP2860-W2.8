@@ -1,44 +1,22 @@
-N = 10000, nThreads = 1
+Complete the table below with your results.
 
-Time for parallel calculations: 0.414749 secs.
-Time for serial calculations: 0.30727 secs.
+Please do not edit or remove table or section headings, as the autograder script uses these to
+locate the start and end of the table.
 
-Time for parallel calculations: 0.373848 secs.
-Time for serial calculations: 0.316719 secs.
+Each row of the table will be split into columns using the Python "split()" method. Therefore,
+- fill in each column with values;
+- only use whitespace between columns;
+- do not add any non-numeric characters (which would cause the value to be read as zero);
+- do not worry if your columns are not perfectly aligned.
 
-Time for parallel calculations: 0.390931 secs.
-Time for serial calculations: 0.315048 secs.
+For the parallel speed-up S, please note that:
+- the time you should use is already output by the provided code;
+- take as the serial execution time the time output by the code when run with a single thread.
+  Hence, the speed-up for 1 thread in the table below must be 1.00.
 
-Average parallel time = 0.393176 secs
-Average serial time = 0.3130123333 secs
-S = 0.7961125127
 
-N = 10000, nThreads = 2
-
-Time for parallel calculations: 0.368555 secs.
-Time for serial calculations: 0.303236 secs.
-
-Time for parallel calculations: 0.397408 secs.
-Time for serial calculations: 0.336814 secs.
-
-Time for parallel calculations: 0.381152 secs.
-Time for serial calculations: 0.336359 secs.
-
-Average parallel time = 0.3823716667 secs
-Average serial time = 0.3254696667 secs
-S = 0.8511866727
-
-N = 10000, nThreads = 4
-
-Time for parallel calculations: 0.373375 secs.
-Time for serial calculations: 0.320025 secs.
-
-Time for parallel calculations: 0.405359 secs.
-Time for serial calculations: 0.306449 secs.
-
-Time for parallel calculations: 0.391277 secs.
-Time for serial calculations: 0.325057 secs.
-
-Average parallel time = 0.3900036667 secs
-Average serial time = 0.317177 secs
-S = 0.8132667128
+No. Threads:   Mean time (average of 3 runs) in seconds:        Parallel speed-up, S:
+============   =========================================        =====================
+1              0.3785803333                                     1.0                                                         
+2              0.3778056667                                     1.002050437    
+4              0.387901                                         0.9759715322                         
