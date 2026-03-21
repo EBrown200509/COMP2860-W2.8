@@ -22,18 +22,58 @@
 #include <pthread.h>
 #include <unistd.h>
 
-#include "portfolioExercise_extra.h"        // Contains routines not essential to the assessment.
+#include "portfolioExercise_extra.h"// Contains routines not essential to the assessment.
+
+// Struct def for use in matrix-vector multiplication
+typedef struct {
+    int start;
+    int end;
+    int N;
+    float **M;
+    float *u;
+    float *v; 
+} args_t;
+
+// Struct def for use in dot product calculation
+typedef struct {
+    int start;
+    int end;
+    float *v;
+    float dotProduct; 
+} args_dot;
+
+// Dot product calculation
+void* dot_product(void *arguments) {
+    // Thread function to perform dot product calculation
+    // Casting the void* arguments back to the struct defined above
+    args_dot *args = (args_dot*) arguments;
+
+    // Loop between start and end variables for a given thread
+    int i;
+    for(i=args->start; i<args->end; i++) {
+        args->dotProduct += args->v[i] * args->v[i];
+    }
+    printf("args->dotProduct = %f\n",args->dotProduct);
+
+    return NULL;
+}
 
 // Matrix-vector multiplication
-void* matrix_vector_mult(void *args) {
+void* matrix_vector_mult(void *arguments) {
     // Thread function to perform matrix-vector multiplication
-    // v[row] = 0.0f
-    v[row] = 0.0f
-    // v[row] += M[row][col] * u[col] for col = 0 to N
-    printf ("Thread %ld starting to sleep.\n ", pthread_self() ) ;
-    sleep (1) ; // Pause for 1 second . Defined in < unistd .h >.
-    printf ("Thread %ld finished sleeping.\n ", pthread_self() ) ;
+    // Casting the void* arguments back to the struct defined above
+    args_t *args = (args_t*) arguments;
 
+    // Loop between start and end variables for a given thread
+    int i;
+    for(i=args->start; i<args->end; i++) {
+        args->v[i] = 0.0f;
+        printf("v[i] initialised for i = %d\n",i);
+        for(int j=0; j<args->N; j++) {
+            args->v[i] += args->M[i][j] * args->u[j];
+        }
+        printf("v[i] calculated as %f\n",args->v[i]);
+    }
     return NULL;
 }
 
@@ -67,24 +107,57 @@ int main( int argc, char **argv )
     float dotProduct = 0.0f;        // You should leave the result of your calculation in this variable.
 
     // Step 1. Matrix-vector multiplication Mu = v.
-    pthread_t thread_id;
+    pthread_t *ids = (pthread_t*) malloc( nThreads*sizeof(pthread_t) );
+    args_t *args = (args_t*) malloc( nThreads*sizeof(args_t) );
+    
 
     // Main thread
     printf("Main thread ID %ld\n", pthread_self());
     // Create new threads and define row iterator
-    int row
-    for(int i=0; i<=nThreads; i++) {
-        pthread_create(&thread_id, NULL, matrix_vector_mult, NULL);
+    int NperThread = N / nThreads;
+    for(int i=0; i<nThreads; i++) {
+        args[i].start = i * NperThread;
+        args[i].end = (i+1) * NperThread;
+        args[i].N = N;
+        args[i].M = M;
+        args[i].u = u;
+        args[i].v = v;
+
+        pthread_create(&ids[i], NULL, matrix_vector_mult, &args[i]);
     }
 
     // Main thread wait until threads finish
-    pthread_join(thread_id, NULL);
-    printf("Main thread ID %ld\n", pthread_self());
+    for(int i=0; i<nThreads; i++) {
+        pthread_join(ids[i], NULL);
+    }
 
     // After completing Step 1, you can uncomment the following line to display M, u and v, to check your solution so far.
-    // if( N<=12 ) displayProblem( N, M, u, v );
+    if( N<=12 ) displayProblem( N, M, u, v );
 
     // Step 2. The dot product of the vector v with itself.
+    args_dot *args2 = (args_dot*) malloc( nThreads*sizeof(args_dot) );
+
+    // Main thread
+    printf("Main thread ID %ld\n", pthread_self());
+    // Create new threads and define row iterator
+    for(int i=0; i<nThreads; i++) {
+        args2[i].start = i * NperThread;
+        args2[i].end = (i+1) * NperThread;
+        args2[i].v = v;
+        args2[i].dotProduct = dotProduct;
+
+        pthread_create(&ids[i], NULL, dot_product, &args2[i]);
+    }
+
+    // Main thread wait until threads finish
+    for(int i=0; i<nThreads; i++) {
+        pthread_join(ids[i], NULL);
+    }
+
+    // Combine results of each thread
+    for(int i=0; i<nThreads; i++) {
+        dotProduct += args2[i].dotProduct;
+    }
 
     // DO NOT REMOVE OR MODIFY THIS PRINT STATEMENT AS IT IS REQUIRED BY THE ASSESSMENT.
     printf( "Result of parallel calculation: %f\n", dotProduct );
