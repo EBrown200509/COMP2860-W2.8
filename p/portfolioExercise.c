@@ -53,7 +53,7 @@ void* dot_product(void *arguments) {
     for(i=args->start; i<args->end; i++) {
         args->dotProduct += args->v[i] * args->v[i];
     }
-    printf("args->dotProduct = %f\n",args->dotProduct);
+    //printf("args->dotProduct = %f\n",args->dotProduct);
 
     return NULL;
 }
@@ -68,11 +68,11 @@ void* matrix_vector_mult(void *arguments) {
     int i;
     for(i=args->start; i<args->end; i++) {
         args->v[i] = 0.0f;
-        printf("v[i] initialised for i = %d\n",i);
+        //printf("v[i] initialised for i = %d\n",i);
         for(int j=0; j<args->N; j++) {
             args->v[i] += args->M[i][j] * args->u[j];
         }
-        printf("v[i] calculated as %f\n",args->v[i]);
+        //printf("v[i] calculated as %f\n",args->v[i]);
     }
     return NULL;
 }
@@ -144,7 +144,7 @@ int main( int argc, char **argv )
         args2[i].start = i * NperThread;
         args2[i].end = (i+1) * NperThread;
         args2[i].v = v;
-        args2[i].dotProduct = dotProduct;
+        args2[i].dotProduct = 0.0f;
 
         pthread_create(&ids[i], NULL, dot_product, &args2[i]);
     }
@@ -171,6 +171,10 @@ int main( int argc, char **argv )
     double seconds = (double)( endTime.tv_sec + 1e-9*endTime.tv_nsec - startTime.tv_sec - 1e-9*startTime.tv_nsec );
     printf( "Time for parallel calculations: %g secs.\n", seconds );
 
+    // Start the timing now.
+    struct timespec startTime2, endTime2;
+    clock_gettime( CLOCK_REALTIME, &startTime2 );
+
     // Step 1. Matrix-vector multiplication Mu = v.
     for( int row=0; row<N; row++ )
     {
@@ -186,6 +190,11 @@ int main( int argc, char **argv )
 
     // DO NOT REMOVE OR MODIFY THIS PRINT STATEMENT AS IT IS REQUIRED BY THE ASSESSMENT.
     printf( "Result of the serial calculation: %f\n", dotProduct_serial );
+
+    // Output final time taken.
+    clock_gettime( CLOCK_REALTIME, &endTime2 );
+    double seconds2 = (double)( endTime2.tv_sec + 1e-9*endTime2.tv_nsec - startTime2.tv_sec - 1e-9*startTime2.tv_nsec );
+    printf( "Time for serial calculations: %g secs.\n", seconds2 );
 
     //
     // Clear up and quit.
